@@ -1,36 +1,40 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import api from "../services/api";
+import { clearStoredAuth, getStoredAuth, saveStoredAuth } from "../stores/authStore";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUserState] = useState(() => getStoredAuth().user);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const { data } = await api.get("/auth/me");
-        setUser(data.user);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const setUser = (nextUser) => {
+    setUserState(nextUser);
 
-    loadUser();
-  }, []);
+    if (nextUser) {
+      saveStoredAuth(nextUser);
+      return;
+    }
 
-  const value = useMemo(
-    () => ({
-      user,
-      loading,
-      isAuthenticated: Boolean(user),
-      setUser,
-    }),
-    [user, loading]
-  );
+    clearStoredAuth();
+  };
+
+  const logout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch {
+      // Local auth state is still the source of truth for the assignment flow.
+    } finally {
+      setUser(null);
+    }
+  };
+
+  const value = {
+    user,
+    loading: false,
+    isAuthenticated: Boolean(user),
+    setUser,
+    logout,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -1,244 +1,185 @@
-import {
-  experienceSections,
-  faqs,
-  footerLinks,
-  heroStats,
-  operatingNotes,
-  pillars,
-  showcaseCards,
-  testimonials,
-  workflowSteps,
-} from "../components/landing/landingContent";
+import { ArrowRight, ChartNoAxesCombined, Clock3, PackageCheck, ShieldCheck, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 
-function SectionIntro({ eyebrow, title, description, align = "left" }) {
-  return (
-    <div className={align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}>
-      <p className="text-sm font-semibold uppercase tracking-[0.32em] text-[#ff9d43]">{eyebrow}</p>
-      <h2 className="mt-4 font-['Georgia','Times_New_Roman',serif] text-4xl leading-tight text-slate-50 sm:text-5xl">
-        {title}
-      </h2>
-      <p className="mt-4 text-lg leading-relaxed text-pink-100/70 sm:text-xl">{description}</p>
-    </div>
-  );
-}
+const heroHighlights = [
+  "Compare courier options in one place",
+  "Keep customer updates easier to manage",
+  "Move from signup to dispatch without friction",
+];
+
+const featureCards = [
+  {
+    title: "Courier choices that stay clear",
+    description: "Review delivery partners, pricing, and movement updates without jumping between tabs.",
+    icon: PackageCheck,
+  },
+  {
+    title: "A calmer operations flow",
+    description: "Give your team one simple workspace for profile details, orders, and ongoing shipment activity.",
+    icon: ChartNoAxesCombined,
+  },
+  {
+    title: "Faster daily handoffs",
+    description: "Keep account setup, dispatch prep, and tracking work close together so fewer steps get missed.",
+    icon: Clock3,
+  },
+];
+
+const workflowSteps = [
+  "Create your account and save your business details",
+  "Open the workspace in a separate tab for operational work",
+  "Manage profile, shipment-ready information, and daily updates",
+];
+
+const faqs = [
+  {
+    question: "Who is this workspace built for?",
+    answer: "Small teams, growing brands, and operators who want a cleaner shipping setup without unnecessary clutter.",
+  },
+  {
+    question: "What opens after Get Started?",
+    answer: "The app workspace opens in a separate tab with the home view, profile section, and account flow.",
+  },
+  {
+    question: "Will my signup stay after refresh?",
+    answer: "Yes. The client stores auth locally so your signed-in state remains until you log out.",
+  },
+];
 
 function LandingPage() {
   return (
-    <main className="relative overflow-hidden pb-8">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_12%,rgba(236,72,153,0.18),transparent_24%),radial-gradient(circle_at_82%_14%,rgba(251,146,60,0.12),transparent_20%),radial-gradient(circle_at_50%_100%,rgba(217,70,239,0.12),transparent_28%)]" />
+    <main>
+      <section className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-20">
+        <div className="space-y-8">
+          <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-white px-4 py-2 text-sm font-medium text-rose-500 shadow-sm">
+            <Sparkles size={16} />
+            Modern courier workspace for small teams
+          </span>
 
-      <div className="relative mx-auto max-w-7xl space-y-24 px-6 pb-20 pt-12">
-        <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="hero-shell rounded-[2.5rem] p-8 sm:p-10 lg:p-12">
-            <span className="inline-flex items-center rounded-full border border-pink-200/20 bg-pink-500/10 px-4 py-1.5 text-sm font-medium text-pink-50/90">
-              Courier shipping platform for growing brands
-            </span>
-            <h1 className="mt-7 max-w-4xl font-['Georgia','Times_New_Roman',serif] text-5xl leading-[0.95] text-slate-50 sm:text-6xl lg:text-7xl">
-              Compare rates, book shipments, and track orders from one place.
+          <div className="space-y-5">
+            <h1 className="max-w-3xl text-5xl font-semibold leading-[1.02] tracking-tight text-stone-900 sm:text-6xl">
+              One clean place to run shipping, account setup, and profile management.
             </h1>
-            <p className="mt-6 max-w-3xl text-lg leading-relaxed text-pink-100/72 sm:text-xl">
-              Built for teams that want faster shipping decisions, smoother dispatch, and cleaner visibility across operations.
+            <p className="max-w-2xl text-lg leading-8 text-stone-600 sm:text-xl">
+              IronManCourier gives your team a lighter workspace for onboarding, courier decisions, and day-to-day shipping operations.
             </p>
-
-            <div className="mt-9 flex flex-wrap gap-3">
-              <a href="#start" className="rounded-full bg-[linear-gradient(90deg,#f04e98,#fb7b54)] px-6 py-3 text-sm font-semibold text-white transition hover:opacity-95">
-                Get Started
-              </a>
-              <a href="#workspace-flow" className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-slate-50 transition hover:border-pink-200/35 hover:bg-white/5">
-                Explore Features
-              </a>
-            </div>
           </div>
 
-          <div className="grid gap-5">
-            <article className="card-modern rounded-[2rem] p-6 sm:p-7">
-              <p className="text-sm uppercase tracking-[0.28em] text-pink-100/55">Why it works</p>
-              <div className="mt-5 space-y-4">
-                {operatingNotes.map((note) => (
-                  <div key={note.title} className="rounded-2xl border border-white/10 bg-slate-950/35 p-4">
-                    <p className="text-lg font-semibold text-slate-50">{note.title}</p>
-                    <p className="mt-2 text-base leading-relaxed text-pink-100/68">{note.description}</p>
-                  </div>
-                ))}
+          <div className="flex flex-wrap gap-3">
+            <Link
+              to="/app/home"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-stone-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-rose-500"
+            >
+              Get Started
+              <ArrowRight size={16} />
+            </Link>
+            <a href="#features" className="inline-flex rounded-full border border-rose-200 bg-white px-6 py-3 text-sm font-semibold text-stone-700 transition hover:border-rose-300 hover:text-rose-500">
+              Explore the flow
+            </a>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            {heroHighlights.map((item) => (
+              <div key={item} className="rounded-3xl border border-rose-200/70 bg-white/80 px-4 py-5 text-sm font-medium leading-6 text-stone-600 shadow-sm">
+                {item}
               </div>
-            </article>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              {heroStats.map((stat) => (
-                <article key={stat.label} className="card-modern rounded-[1.75rem] p-5">
-                  <p className="text-3xl font-semibold text-slate-50">{stat.value}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-pink-100/68">{stat.label}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="workspace-flow" className="space-y-8">
-          <SectionIntro
-            eyebrow="Features"
-            title="Everything needed to run shipping with less friction."
-            description="A commercial shipping workflow focused on speed, visibility, and better courier decisions."
-          />
-          <div className="grid gap-5 lg:grid-cols-3">
-            {pillars.map((pillar) => (
-              <article key={pillar.title} className="card-modern rounded-[2rem] p-7">
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#ff9d43]">{pillar.eyebrow}</p>
-                <h3 className="mt-4 text-3xl font-semibold leading-tight text-slate-50">{pillar.title}</h3>
-                <p className="mt-4 text-lg leading-relaxed text-pink-100/68">{pillar.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="space-y-8">
-          <SectionIntro
-            eyebrow="Product"
-            title="A clean interface for the work that matters every day."
-            description="Rate comparison, shipment booking, and tracking visibility arranged into a sharper, easier product story."
-          />
-          <div className="grid gap-5 md:grid-cols-3">
-            {showcaseCards.map((card, index) => (
-              <article key={card.title} className="card-modern rounded-[2rem] p-6">
-                <div className="mb-8 flex h-40 items-end rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] p-5">
-                  <div className="w-full rounded-[1.25rem] border border-white/10 bg-slate-950/35 p-4">
-                    <div className="flex items-center justify-between text-sm text-pink-100/55">
-                      <span>View {index + 1}</span>
-                      <span>Live</span>
-                    </div>
-                    <div className="mt-4 h-2 rounded-full bg-white/10" />
-                    <div className="mt-3 grid gap-2">
-                      <div className="h-2 rounded-full bg-pink-400/40" />
-                      <div className="h-2 w-4/5 rounded-full bg-white/10" />
-                      <div className="h-2 w-3/5 rounded-full bg-white/10" />
-                    </div>
-                  </div>
-                </div>
-                <h3 className="text-2xl font-semibold text-slate-50">{card.title}</h3>
-                <p className="mt-3 text-lg leading-relaxed text-pink-100/68">{card.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="workflow-story" className="space-y-8">
-          <SectionIntro
-            eyebrow="Workflow"
-            title="A simple flow from order details to delivery updates."
-            description="Keep rate checks, booking, and shipment follow-up connected in one clean process."
-          />
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {workflowSteps.map((item) => (
-              <article key={item.step} className="card-modern rounded-[2rem] p-6">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-pink-200/20 bg-pink-500/10 text-sm font-semibold text-pink-50">
-                  {item.step}
-                </span>
-                <h3 className="mt-5 text-2xl font-semibold text-slate-50">{item.title}</h3>
-                <p className="mt-3 text-lg leading-relaxed text-pink-100/68">{item.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="space-y-8">
-          <SectionIntro
-            eyebrow="Use Cases"
-            title="Useful across operations, support, and shipping leadership."
-            description="One setup that helps different teams move faster with cleaner shipment visibility."
-          />
-          <div className="grid gap-6 xl:grid-cols-2">
-            {experienceSections.map((section) => (
-              <article key={section.id} id={section.id} className="card-modern rounded-[2rem] p-7 sm:p-8">
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#ff9d43]">{section.label}</p>
-                <h3 className="mt-4 font-['Georgia','Times_New_Roman',serif] text-4xl leading-tight text-slate-50">{section.title}</h3>
-                <p className="mt-4 text-lg leading-relaxed text-pink-100/68">{section.body}</p>
-                <ul className="mt-6 space-y-3">
-                  {section.items.map((item) => (
-                    <li key={item} className="rounded-2xl border border-white/10 bg-slate-950/25 px-4 py-4 text-base text-pink-50/90">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="space-y-8">
-          <SectionIntro
-            eyebrow="Proof"
-            title="Clearer shipping workflows create stronger business confidence."
-            description="The value is straightforward: quicker actions, cleaner visibility, and a better operating experience."
-            align="center"
-          />
-          <div className="grid gap-5 lg:grid-cols-2">
-            {testimonials.map((item) => (
-              <article key={item.name} className="card-modern rounded-[2rem] p-7">
-                <p className="font-['Georgia','Times_New_Roman',serif] text-3xl leading-relaxed text-slate-50">“{item.quote}”</p>
-                <div className="mt-6">
-                  <p className="text-lg font-semibold text-pink-50">{item.name}</p>
-                  <p className="text-base text-pink-100/60">{item.role}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="faq" className="grid gap-6 xl:grid-cols-[1fr_0.92fr]">
-          <div className="card-modern rounded-[2rem] p-8 sm:p-10">
-            <SectionIntro
-              eyebrow="FAQ"
-              title="Practical answers for the next stage of the product."
-              description="Use the current experience as a base for a larger shipping dashboard, booking flow, or customer support panel."
-            />
-          </div>
-          <div className="space-y-4">
-            {faqs.map((item) => (
-              <details key={item.question} className="rounded-[1.5rem] border border-white/10 bg-slate-950/25 p-5 text-lg text-slate-100">
-                <summary className="cursor-pointer font-semibold text-slate-50">{item.question}</summary>
-                <p className="mt-3 leading-relaxed text-pink-100/68">{item.answer}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-
-        <section id="start" className="hero-shell rounded-[2.5rem] p-8 sm:p-10 lg:p-12">
-          <p className="text-sm font-semibold uppercase tracking-[0.32em] text-[#ff9d43]">Get Started</p>
-          <h2 className="mt-5 max-w-4xl font-['Georgia','Times_New_Roman',serif] text-4xl leading-tight text-slate-50 sm:text-5xl">
-            Manage shipping from one better-looking workspace.
-          </h2>
-          <p className="mt-5 max-w-3xl text-lg leading-relaxed text-pink-100/72 sm:text-xl">
-            A stronger commercial presentation for rate comparison, booking, and tracking workflows.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="/auth" className="rounded-full bg-[linear-gradient(90deg,#f04e98,#fb7b54)] px-6 py-3 text-sm font-semibold text-white transition hover:opacity-95">
-              Open workspace
-            </a>
-            <a href="#workspace-flow" className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-slate-50 transition hover:border-pink-200/35 hover:bg-white/5">
-              View features
-            </a>
-          </div>
-        </section>
-      </div>
-
-      <footer className="border-t border-white/10 bg-slate-950/35">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[1.2fr_0.8fr]">
-          <div>
-            <p className="font-['Georgia','Times_New_Roman',serif] text-4xl text-slate-50">IronManCourier</p>
-            <p className="mt-3 max-w-xl text-lg leading-relaxed text-pink-100/65">
-              Shipping workspace for brands that want better courier decisions and clearer operations.
-            </p>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            {footerLinks.map((link) => (
-              <a key={link.label} href={link.href} className="text-base text-pink-100/72 transition hover:text-pink-50">
-                {link.label}
-              </a>
             ))}
           </div>
         </div>
-      </footer>
+
+        <div className="rounded-[2rem] border border-rose-200/80 bg-white/80 p-6 shadow-[0_35px_80px_rgba(244,114,182,0.12)] sm:p-8">
+          <div className="rounded-[1.75rem] bg-[linear-gradient(180deg,#fff7f2_0%,#fff0f3_100%)] p-6">
+            <div className="flex items-center justify-between text-sm text-stone-500">
+              <span>Workspace preview</span>
+              <span className="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-500">Live-ready</span>
+            </div>
+            <div className="mt-6 space-y-4">
+              <div className="rounded-3xl bg-white p-5 shadow-sm">
+                <p className="text-sm font-medium text-stone-500">Account progress</p>
+                <p className="mt-3 text-3xl font-semibold text-stone-900">92%</p>
+                <p className="mt-2 text-sm leading-6 text-stone-500">Profile, bank, and KYC details stay together inside the same workspace.</p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-3xl bg-stone-900 p-5 text-white">
+                  <p className="text-sm text-stone-300">Daily orders</p>
+                  <p className="mt-3 text-2xl font-semibold">128</p>
+                </div>
+                <div className="rounded-3xl bg-white p-5 shadow-sm">
+                  <p className="text-sm text-stone-500">Courier options</p>
+                  <p className="mt-3 text-2xl font-semibold text-stone-900">12</p>
+                </div>
+              </div>
+              <div className="rounded-3xl border border-dashed border-rose-200 bg-white px-5 py-4 text-sm leading-6 text-stone-500">
+                Open the workspace in a separate tab, sign in once, and keep your setup saved through refresh.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8 lg:py-16">
+        <div className="max-w-3xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-rose-500">Features</p>
+          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">A more commercial workspace without a cluttered feel.</h2>
+          <p className="mt-4 text-lg leading-8 text-stone-600">The product story stays simple: onboard faster, manage operations from one area, and keep profile details close to the work.</p>
+        </div>
+        <div className="mt-8 grid gap-5 lg:grid-cols-3">
+          {featureCards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <article key={card.title} className="rounded-[2rem] border border-rose-200/70 bg-white/85 p-7 shadow-sm">
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-rose-100 text-rose-500">
+                  <Icon size={22} />
+                </span>
+                <h3 className="mt-6 text-2xl font-semibold text-stone-900">{card.title}</h3>
+                <p className="mt-3 text-base leading-7 text-stone-600">{card.description}</p>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id="why-us" className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8 lg:py-16">
+        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <div className="rounded-[2rem] bg-stone-900 p-8 text-white shadow-[0_26px_70px_rgba(28,25,23,0.18)]">
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-rose-200">Why teams like it</p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">Light on friction, strong on clarity.</h2>
+            <p className="mt-4 max-w-xl text-base leading-7 text-stone-300">This is designed to feel commercial and professional without reading like a heavy enterprise product.</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {workflowSteps.map((step, index) => (
+              <div key={step} className="rounded-[2rem] border border-rose-200/70 bg-white/85 p-6 shadow-sm">
+                <p className="text-sm font-semibold text-rose-500">0{index + 1}</p>
+                <p className="mt-4 text-base leading-7 text-stone-700">{step}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="workflow" className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8 lg:py-16">
+        <div className="rounded-[2rem] border border-rose-200/70 bg-white/85 p-8 shadow-sm sm:p-10">
+          <div className="flex items-center gap-3 text-rose-500">
+            <ShieldCheck size={20} />
+            <p className="text-sm font-semibold uppercase tracking-[0.28em]">Workflow</p>
+          </div>
+          <h2 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">Landing page for discovery. Workspace for action.</h2>
+          <p className="mt-4 max-w-3xl text-lg leading-8 text-stone-600">Your marketing page stays public and polished. The actual work happens inside a separate tab where users can manage home, profile, and ongoing tasks.</p>
+        </div>
+      </section>
+
+      <section id="faq" className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8 lg:py-16">
+        <div className="grid gap-4 lg:grid-cols-3">
+          {faqs.map((item) => (
+            <details key={item.question} className="rounded-[2rem] border border-rose-200/70 bg-white/85 p-6 shadow-sm">
+              <summary className="cursor-pointer text-lg font-semibold text-stone-900">{item.question}</summary>
+              <p className="mt-4 text-base leading-7 text-stone-600">{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

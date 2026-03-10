@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 
@@ -13,15 +13,24 @@ const initialForm = {
 
 function AuthPage() {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { isAuthenticated, setUser } = useAuth();
 
   const [mode, setMode] = useState("signin");
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ type: "", message: "" });
   const [generatedOtp, setGeneratedOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    setGeneratedOtp("");
+    setStatus({ type: "", message: "" });
+    setForm((current) => ({ ...current, otp: "" }));
+  }, [mode]);
+
+  if (isAuthenticated) {
+    return <Navigate to="/app/home" replace />;
+  }
 
   const onChange = (event) => {
     const { name, value } = event.target;
@@ -33,7 +42,7 @@ function AuthPage() {
     setGeneratedOtp("");
 
     if (!form.email) {
-      setStatus({ type: "error", message: "Please enter your email first." });
+      setStatus({ type: "error", message: "Enter your email first." });
       return;
     }
 
@@ -41,185 +50,116 @@ function AuthPage() {
       setSendingOtp(true);
       const { data } = await api.post(
         "/auth/send-otp",
-        {
-          email: form.email,
-          purpose: mode,
-        },
-        {
-          timeout: 60000,
-        }
+        { email: form.email, purpose: mode },
+        { timeout: 60000 }
       );
 
-      setOtpSent(true);
       setGeneratedOtp(data.otp || "");
-      setStatus({
-        type: "success",
-        message: data.message || "OTP generated successfully.",
-      });
+      setStatus({ type: "success", message: data.message || "OTP generated successfully." });
     } catch (error) {
-      setStatus({
-        type: "error",
-        message: error?.response?.data?.message || "Failed to send OTP",
-      });
+      setStatus({ type: "error", message: error?.response?.data?.message || "Unable to generate OTP" });
     } finally {
       setSendingOtp(false);
     }
   };
 
-  const submit = async (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
     setStatus({ type: "", message: "" });
 
+    const endpoint = mode === "signup" ? "/auth/signup" : "/auth/signin";
+    const payload =
+      mode === "signup"
+        ? {
+            name: form.name,
+            phone: form.phone,
+            email: form.email,
+            password: form.password,
+            otp: form.otp,
+          }
+        : {
+            email: form.email,
+            password: form.password,
+            otp: form.otp,
+          };
+
     try {
       setSubmitting(true);
-
-      const endpoint = mode === "signup" ? "/auth/signup" : "/auth/signin";
-      const payload =
-        mode === "signup"
-          ? {
-              name: form.name,
-              phone: form.phone,
-              email: form.email,
-              password: form.password,
-              otp: form.otp,
-            }
-          : {
-              email: form.email,
-              password: form.password,
-              otp: form.otp,
-            };
-
       const { data } = await api.post(endpoint, payload);
       setUser(data.user);
-      navigate("/");
+      navigate("/app/home");
     } catch (error) {
-      setStatus({
-        type: "error",
-        message: error?.response?.data?.message || "Authentication failed",
-      });
+      setStatus({ type: "error", message: error?.response?.data?.message || "Authentication failed" });
     } finally {
       setSubmitting(false);
     }
   };
 
-  const switchMode = (nextMode) => {
-    setMode(nextMode);
-    setOtpSent(false);
-    setGeneratedOtp("");
-    setStatus({ type: "", message: "" });
-    setForm((current) => ({ ...current, otp: "" }));
-  };
-
   return (
-    <main className="relative mx-auto grid min-h-[calc(100vh-90px)] w-full max-w-7xl place-items-center overflow-hidden px-6 py-16">
-      <div className="pointer-events-none absolute -left-16 top-16 h-48 w-48 rounded-full bg-pink-500/15 blur-3xl" />
-      <div className="pointer-events-none absolute -right-20 bottom-8 h-56 w-56 rounded-full bg-fuchsia-500/15 blur-3xl" />
+    <main className="mx-auto grid min-h-[calc(100vh-170px)] w-full max-w-7xl gap-10 px-5 py-10 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-16">
+      <section className="rounded-[2rem] bg-stone-900 p-8 text-white shadow-[0_34px_80px_rgba(28,25,23,0.18)] sm:p-10">
+        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-rose-200">Authentication</p>
+        <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Sign in once and stay signed in.</h1>
+        <p className="mt-4 max-w-xl text-lg leading-8 text-stone-300">The auth state is stored locally, so signup persists through refresh until you actively log out.</p>
+        <div className="mt-8 space-y-4 text-sm leading-7 text-stone-300">
+          <p>1. Generate the OTP inside the form.</p>
+          <p>2. Enter the same OTP in the field below.</p>
+          <p>3. Finish signup and continue into the workspace home.</p>
+        </div>
+      </section>
 
-      <section className="card-modern animate-fade-in-up w-full max-w-xl rounded-3xl p-8">
-        <h1 className="mb-2 text-3xl font-semibold tracking-tight text-slate-100">Welcome back</h1>
-        <p className="mb-7 text-muted">Secure OTP authentication for sign in and sign up.</p>
-
-        <div className="mb-8 grid grid-cols-2 rounded-full border border-white/10 bg-slate-900/70 p-1">
+      <section className="rounded-[2rem] border border-rose-200/70 bg-white/85 p-6 shadow-sm sm:p-8">
+        <div className="grid grid-cols-2 rounded-full bg-rose-50 p-1">
           <button
             type="button"
-            onClick={() => switchMode("signin")}
-            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              mode === "signin" ? "bg-gradient-to-r from-fuchsia-500 to-rose-500 text-white" : "text-slate-300"
-            }`}
+            onClick={() => setMode("signin")}
+            className={`rounded-full px-4 py-3 text-sm font-semibold transition ${mode === "signin" ? "bg-stone-900 text-white" : "text-stone-600"}`}
           >
             Sign In
           </button>
           <button
             type="button"
-            onClick={() => switchMode("signup")}
-            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              mode === "signup" ? "bg-gradient-to-r from-fuchsia-500 to-rose-500 text-white" : "text-slate-300"
-            }`}
+            onClick={() => setMode("signup")}
+            className={`rounded-full px-4 py-3 text-sm font-semibold transition ${mode === "signup" ? "bg-stone-900 text-white" : "text-stone-600"}`}
           >
             Sign Up
           </button>
         </div>
 
-        <form className="space-y-4" onSubmit={submit}>
+        <form className="mt-6 space-y-4" onSubmit={onSubmit}>
           {mode === "signup" ? (
-            <>
-              <input
-                name="name"
-                placeholder="Full Name"
-                value={form.name}
-                onChange={onChange}
-                required
-                className="w-full rounded-xl border border-white/10 bg-slate-950/65 px-4 py-3 outline-none transition focus:border-pink-300"
-              />
-              <input
-                name="phone"
-                placeholder="Phone Number"
-                value={form.phone}
-                onChange={onChange}
-                required
-                className="w-full rounded-xl border border-white/10 bg-slate-950/65 px-4 py-3 outline-none transition focus:border-pink-300"
-              />
-            </>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <input name="name" placeholder="Full name" value={form.name} onChange={onChange} required className="rounded-2xl border border-rose-200 bg-rose-50/60 px-4 py-3 outline-none transition focus:border-rose-400" />
+              <input name="phone" placeholder="Phone number" value={form.phone} onChange={onChange} required className="rounded-2xl border border-rose-200 bg-rose-50/60 px-4 py-3 outline-none transition focus:border-rose-400" />
+            </div>
           ) : null}
 
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={onChange}
-            required
-            className="w-full rounded-xl border border-white/10 bg-slate-950/65 px-4 py-3 outline-none transition focus:border-pink-300"
-          />
+          <input name="email" type="email" placeholder="Email" value={form.email} onChange={onChange} required className="w-full rounded-2xl border border-rose-200 bg-rose-50/60 px-4 py-3 outline-none transition focus:border-rose-400" />
+          <input name="password" type="password" placeholder="Password" value={form.password} onChange={onChange} required className="w-full rounded-2xl border border-rose-200 bg-rose-50/60 px-4 py-3 outline-none transition focus:border-rose-400" />
 
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={onChange}
-            required
-            className="w-full rounded-xl border border-white/10 bg-slate-950/65 px-4 py-3 outline-none transition focus:border-pink-300"
-          />
-
-          <div className="flex gap-3">
-            <input
-              name="otp"
-              placeholder="Enter OTP"
-              value={form.otp}
-              onChange={onChange}
-              required
-              className="w-full rounded-xl border border-white/10 bg-slate-950/65 px-4 py-3 outline-none transition focus:border-pink-300"
-            />
-            <button
-              type="button"
-              onClick={sendOtp}
-              disabled={sendingOtp}
-              className="whitespace-nowrap rounded-xl border border-pink-200/30 bg-pink-500/10 px-4 py-3 text-sm font-medium text-pink-100 transition hover:border-pink-200/60 disabled:opacity-60"
-            >
-              {sendingOtp ? "Sending..." : otpSent ? "Resend OTP" : "Send OTP"}
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <input name="otp" placeholder="Enter OTP" value={form.otp} onChange={onChange} required className="w-full rounded-2xl border border-rose-200 bg-rose-50/60 px-4 py-3 outline-none transition focus:border-rose-400" />
+            <button type="button" onClick={sendOtp} disabled={sendingOtp} className="rounded-2xl bg-rose-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-rose-600 disabled:opacity-60">
+              {sendingOtp ? "Generating..." : "Generate OTP"}
             </button>
           </div>
 
           {status.message ? (
-            <p className={`rounded-xl px-4 py-3 text-sm ${status.type === "error" ? "bg-red-500/10 text-red-300" : "bg-pink-500/10 text-pink-200"}`}>
+            <p className={`rounded-2xl px-4 py-3 text-sm ${status.type === "error" ? "bg-red-50 text-red-600" : "bg-rose-50 text-rose-600"}`}>
               {status.message}
             </p>
           ) : null}
 
           {generatedOtp ? (
-            <div className="rounded-xl border border-pink-300/20 bg-slate-950/65 px-4 py-3">
-              <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Generated OTP</p>
-              <p className="mt-2 text-2xl font-semibold tracking-[0.32em] text-pink-200">{generatedOtp}</p>
+            <div className="rounded-[1.5rem] border border-rose-200 bg-[linear-gradient(180deg,#fff7f3_0%,#fff0f4_100%)] px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-rose-500">Generated OTP</p>
+              <p className="mt-3 text-3xl font-semibold tracking-[0.36em] text-stone-900">{generatedOtp}</p>
+              <p className="mt-3 text-sm leading-6 text-stone-500">Use this OTP in the field above and continue. It appears right below the auth details as requested.</p>
             </div>
           ) : null}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-xl bg-gradient-to-r from-fuchsia-500 to-rose-500 px-4 py-3 font-semibold text-white transition hover:from-fuchsia-400 hover:to-rose-400 disabled:opacity-60"
-          >
-            {submitting ? "Please wait..." : mode === "signup" ? "Create Account" : "Sign In"}
+          <button type="submit" disabled={submitting} className="w-full rounded-2xl bg-stone-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-rose-500 disabled:opacity-60">
+            {submitting ? "Please wait..." : mode === "signup" ? "Create account" : "Sign in"}
           </button>
         </form>
       </section>

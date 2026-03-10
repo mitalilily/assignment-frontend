@@ -1,46 +1,28 @@
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import { Navigate, Route, Routes } from "react-router-dom";
+import MarketingLayout from "./layouts/MarketingLayout";
+import AppLayout from "./layouts/AppLayout";
 import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/AuthPage";
+import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
-import { useAuth } from "./context/AuthContext";
 
-function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
-
-  if (loading) {
-    return <div className="grid min-h-screen place-items-center bg-[#0f0611] text-slate-100">Loading...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  return children;
-}
-
-function AppShell() {
-  const location = useLocation();
-  const showNavbar = location.pathname !== "/profile";
-
+function App() {
   return (
-    <div className={showNavbar ? "min-h-screen bg-[#0f0611] text-slate-100" : "min-h-screen"}>
-      {showNavbar ? <Navbar /> : null}
-      <Routes>
+    <Routes>
+      <Route element={<MarketingLayout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </div>
+      </Route>
+
+      <Route path="/app" element={<AppLayout />}>
+        <Route index element={<Navigate to="home" replace />} />
+        <Route path="home" element={<HomePage />} />
+        <Route path="profile" element={<ProfilePage />} />
+      </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
-export default AppShell;
+export default App;
