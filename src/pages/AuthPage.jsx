@@ -18,6 +18,7 @@ function AuthPage() {
   const [mode, setMode] = useState("signin");
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ type: "", message: "" });
+  const [generatedOtp, setGeneratedOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -29,6 +30,7 @@ function AuthPage() {
 
   const sendOtp = async () => {
     setStatus({ type: "", message: "" });
+    setGeneratedOtp("");
 
     if (!form.email) {
       setStatus({ type: "error", message: "Please enter your email first." });
@@ -49,9 +51,10 @@ function AuthPage() {
       );
 
       setOtpSent(true);
+      setGeneratedOtp(data.otp || "");
       setStatus({
         type: "success",
-        message: data.message || "OTP sent to your email address.",
+        message: data.message || "OTP generated successfully.",
       });
     } catch (error) {
       setStatus({
@@ -102,6 +105,7 @@ function AuthPage() {
   const switchMode = (nextMode) => {
     setMode(nextMode);
     setOtpSent(false);
+    setGeneratedOtp("");
     setStatus({ type: "", message: "" });
     setForm((current) => ({ ...current, otp: "" }));
   };
@@ -201,6 +205,13 @@ function AuthPage() {
             <p className={`rounded-xl px-4 py-3 text-sm ${status.type === "error" ? "bg-red-500/10 text-red-300" : "bg-pink-500/10 text-pink-200"}`}>
               {status.message}
             </p>
+          ) : null}
+
+          {generatedOtp ? (
+            <div className="rounded-xl border border-pink-300/20 bg-slate-950/65 px-4 py-3">
+              <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Generated OTP</p>
+              <p className="mt-2 text-2xl font-semibold tracking-[0.32em] text-pink-200">{generatedOtp}</p>
+            </div>
           ) : null}
 
           <button
